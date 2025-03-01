@@ -35,7 +35,7 @@ export const Header = ({ selectedPersonality }) => {
       />
 
       <StyledTitle>
-        {selectedPersonality ? selectedPersonality.name : "Personality"}
+        {selectedPersonality ? selectedPersonality.name : ""}
       </StyledTitle>
 
       <FontAwesomeIcon
