@@ -13,7 +13,7 @@ function App() {
   return (
     <Router>
       <Main>
-        <Header />
+        <Header selectedPersonality={selectedPersonality} />
         <Routes>
           <Route
             path="/"

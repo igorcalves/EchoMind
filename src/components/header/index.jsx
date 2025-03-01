@@ -9,7 +9,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
-export const Header = () => {
+export const Header = ({ selectedPersonality }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
@@ -30,11 +30,13 @@ export const Header = () => {
           height: "49px",
           cursor: "pointer",
         }}
-        src={Logo}
+        src={selectedPersonality ? selectedPersonality.image : Logo}
         alt="Logo"
       />
 
-      <StyledTitle></StyledTitle>
+      <StyledTitle>
+        {selectedPersonality ? selectedPersonality.name : "Personality"}
+      </StyledTitle>
 
       <FontAwesomeIcon
         style={{
