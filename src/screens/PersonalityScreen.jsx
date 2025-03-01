@@ -35,7 +35,7 @@ export const PersonalityScreen = ({
               flex: 1,
             }}
           >
-            <StyledLabel>Selecione uma personalidade</StyledLabel>
+            <StyledLabel>Selecione uma personalidade </StyledLabel>
           </Container>
         )}
       </Row>
