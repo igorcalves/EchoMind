@@ -8,34 +8,61 @@ import {
   Button,
 } from "./styles";
 import { useLocation } from "react-router-dom";
+import { sendMessageToOllama } from "../../service/ollama";
+import { preparePrompt } from "../../service/preparePrompt";
 
 export const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
   const location = useLocation();
   const { selectedPersonality } = location.state || {};
 
-  const handleSendMessage = () => {
-    console.log(selectedPersonality);
+  const handleSendMessage = async () => {
+    if (inputValue.trim() === "" || isLoading) return;
 
-    if (inputValue.trim()) {
-      setMessages([...messages, { text: inputValue, sender: "user" }]);
-      setInputValue("");
+    const newMessage = {
+      text: inputValue,
+      sender: "user",
+    };
 
-      setTimeout(() => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            text:
-              "Esta é uma resposta automática de " + selectedPersonality.name,
-            sender: "bot",
-          },
-        ]);
-      }, 1000);
+    const updatedMessages = [...messages, newMessage];
+    setMessages(updatedMessages);
+    setInputValue("");
+    setIsLoading(true);
+
+    const prompt = preparePrompt(
+      selectedPersonality,
+      inputValue,
+      updatedMessages
+    );
+
+    try {
+      await sendMessageToOllama(prompt, (partialMessage) => {
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          const lastMessage = updatedMessages[updatedMessages.length - 1];
+
+          if (lastMessage?.sender === "bot") {
+            lastMessage.text = partialMessage;
+          } else {
+            updatedMessages.push({ text: partialMessage, sender: "bot" });
+          }
+
+          return updatedMessages;
+        });
+      });
+    } catch (error) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: "Error: Unable to fetch response.", sender: "bot" },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleSendMessage();
     }
@@ -55,10 +82,13 @@ export const ChatScreen = () => {
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder="Type a message..."
+          disabled={isLoading} // Desabilita enquanto carrega
         />
-        <Button onClick={handleSendMessage}>Send</Button>
+        <Button onClick={handleSendMessage} disabled={isLoading}>
+          {isLoading ? "Sending..." : "Send"}
+        </Button>
       </InputContainer>
     </ChatContainer>
   );
