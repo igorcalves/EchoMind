@@ -11,7 +11,7 @@ export const preparePrompt = (
     .join("\n");
 
   const prompt = `
-    todas perguntat devem ser respondidas em portugues
+    todas perguntas devem ser respondidas em portugues
       Você faz parte de uma personalidade chamada ${personalityName}.
       ${personalityDescription}.
       Aqui está o histórico da conversa até agora:

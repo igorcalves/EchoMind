@@ -57,6 +57,7 @@ export const ChatScreen = () => {
         ...prevMessages,
         { text: "Error: Unable to fetch response.", sender: "bot" },
       ]);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -83,8 +84,8 @@ export const ChatScreen = () => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-          disabled={isLoading} // Desabilita enquanto carrega
+          placeholder="Digite sua mensagem..."
+          disabled={isLoading}
         />
         <Button onClick={handleSendMessage} disabled={isLoading}>
           {isLoading ? "Sending..." : "Send"}
